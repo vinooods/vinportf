@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vino Dwi Sebastian — Portofolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="png" sizes="32x32" href="favicon V.png">
+
+  <style>
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; }
+
+    .bg-deep-ocean {
+      background:
+        radial-gradient(1200px 800px at 80% -10%, #4f46e5 0%, transparent 60%),
+        radial-gradient(1000px 600px at 10% 10%, #06b6d4 0%, transparent 55%),
+        radial-gradient(900px 700px at 90% 80%, #a855f7 0%, transparent 60%),
+        linear-gradient(145deg, #0a0f1e, #0d1a2b 60%, #0a0f1e);
+      position: relative; overflow-x: hidden; min-height: 100vh;
+    }
+
+    .wave-layer { position: fixed; left: 0; right: 0; pointer-events: none; z-index: 0; }
+    .wave-top { top: 0; transform: rotate(180deg); opacity: .32; }
+    .wave-bottom { bottom: 0; opacity: .5; }
+
+    .bubble { position: fixed; border-radius: 9999px; background: rgba(255,255,255,.12); filter: blur(1px);
+      animation: rise var(--dur, 14s) linear infinite; bottom: -40px; z-index: 0; }
+    @keyframes rise {
+      0% { transform: translateY(0) translateX(0) scale(var(--s,1)); opacity: 0; }
+      10% { opacity: .4; } 90% { opacity: .25; }
+      100% { transform: translateY(-120vh) translateX(var(--x,30px)) scale(var(--s,1)); opacity: 0; }
+    }
+
+    .glass { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(10px); }
+    .glass-dark { background: rgba(7,13,26,0.58); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); }
+
+    .btn-shine { position: relative; overflow: hidden; }
+    .btn-shine::after {
+      content: ""; position: absolute; top: 0; left: -120%;
+      width: 120%; height: 100%;
+      background: linear-gradient(115deg, transparent 10%, rgba(255,255,255,0.25) 45%, transparent 55%);
+      transform: skewX(-20deg); transition: left .6s ease;
+    }
+    .btn-shine:hover::after { left: 120%; }
+
+    .card-zoom { transition: transform .3s ease, box-shadow .3s ease, background .3s ease; }
+    .card-zoom:hover { transform: translateY(-4px); box-shadow: 0 12px 34px rgba(0,0,0,.28); }
+
+    .section { scroll-margin-top: 90px; }
+
+    .ring { --size: 120px; width: var(--size); height: var(--size); display: grid; place-items: center; position: relative; }
+    .ring svg { transform: rotate(-90deg); }
+    .ring .label { position: absolute; text-align: center; }
+    .ring circle.track { stroke: rgba(255,255,255,.12); }
+    .ring circle.progress { transition: stroke-dashoffset .6s ease; }
+
+    .admin-panel {
+      position: fixed; top: 0; right: 0; height: 100vh; width: 100%; max-width: 900px;
+      transform: translateX(100%); transition: transform .35s ease;
+      z-index: 50; display: grid; grid-template-rows: auto 1fr auto;
+    }
+    .admin-panel.open { transform: translateX(0); }
+    .admin-header { position: sticky; top: 0; z-index: 1; }
+    .admin-body { overflow-y: auto; }
+    .admin-footer { position: sticky; bottom: 0; z-index: 1; }
+
+    #toTop { opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease; transform: translateY(10px); }
+    #toTop.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+    .layout { position: relative; z-index: 1; }
+
+    * { scrollbar-width: thin; scrollbar-color: #7dd3fc #0b1222; }
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
+    *::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #22d3ee, #818cf8); border-radius: 9999px; }
+  </style>
+</head>
+<body class="text-slate-100 bg-deep-ocean selection:bg-cyan-300 selection:text-slate-900">
+  <!-- Waves -->
+  <svg class="wave-layer wave-top" width="100%" height="160" viewBox="0 0 1440 160" preserveAspectRatio="none" aria-hidden="true">
+    <defs><linearGradient id="topGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#60a5fa" stop-opacity="0.45"/><stop offset="100%" stop-color="#06b6d4" stop-opacity="0.35"/></linearGradient></defs>
+    <path d="M0,60 C200,120 360,10 520,40 C680,70 880,150 1100,90 C1260,50 1360,70 1440,90 L1440,0 L0,0 Z" fill="url(#topGrad)"></path>
+  </svg>
+  <svg class="wave-layer wave-bottom" width="100%" height="220" viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true">
+    <defs><linearGradient id="botGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#22d3ee" stop-opacity="0.55"/><stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.45"/></linearGradient></defs>
+    <path d="M0,130 C200,180 360,120 520,140 C680,160 880,210 1100,160 C1260,125 1360,160 1440,190 L1440,220 L0,220 Z" fill="url(#botGrad)"></path>
+  </svg>
+
+  <div id="bubbles"></div>
+
+  <div class="layout max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+    <!-- Topbar mobile -->
+    <div class="md:hidden sticky top-0 z-20 pt-4">
+      <div class="glass-dark rounded-2xl px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div data-logo class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-indigo-500 grid place-items-center p-1" title="Buka Admin (ketuk 5x)">
+  <svg viewBox="0 0 64 64" class="w-full h-full" aria-hidden="true">
+    <defs>
+      <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#818cf8"/>
+      </linearGradient>
+    </defs>
+    <circle cx="32" cy="32" r="30" fill="rgba(255,255,255,0.15)"></circle>
+    <path d="M32 10 L40 28 L60 28 L44 40 L50 58 L32 48 L14 58 L20 40 L4 28 L24 28 Z" fill="url(#lg1)" />
+  </svg>
+</div>
+          <div>
+            <p class="font-semibold leading-tight">Vino Dwi Sebastian</p>
+            <p class="text-[11px] text-slate-300/80">Pelajar RPL — SMK Krian 1</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Admin button hidden by default; revealed in Owner Mode -->
+          <button id="btnAdmin" class="hidden btn-shine bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-slate-900 font-semibold px-3 py-2 rounded-xl shadow-lg text-sm">Admin</button>
+          <button id="btnMenu" class="px-3 py-2 rounded-xl hover:bg-white/10">☰</button>
+        </div>
+      </div>
+      <div id="mobileNav" class="hidden mt-2 glass-dark rounded-2xl p-3">
+        <nav class="flex flex-col">
+          <a href="#home" class="px-4 py-3 rounded-xl hover:bg-white/10">Beranda</a>
+          <a href="#about" class="px-4 py-3 rounded-xl hover:bg-white/10">Tentang</a>
+          <a href="#skills" class="px-4 py-3 rounded-xl hover:bg-white/10">Keahlian</a>
+          <a href="#pengalaman" class="px-4 py-3 rounded-xl hover:bg-white/10">Pengalaman</a>
+          <a href="#certificates" class="px-4 py-3 rounded-xl hover:bg-white/10">Sertifikat</a>
+          <a href="#education" class="px-4 py-3 rounded-xl hover:bg-white/10">Pendidikan</a>
+          <a href="#contact" class="px-4 py-3 rounded-xl hover:bg-white/10">Kontak</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Sidebar + Main -->
+    <div class="grid md:grid-cols-[290px,1fr] gap-6 lg:gap-8 mt-6 md:mt-10">
+      <!-- Sidebar -->
+      <aside class="hidden md:block sticky top-6 self-start z-10">
+        <div class="glass-dark rounded-3xl p-6 space-y-6">
+          <div class="flex items-center gap-4">
+            <div data-logo class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 to-indigo-500 grid place-items-center shadow-lg p-1" title="Buka Admin (ketuk 5x)">
+<!-- favicon V gradient -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="gradV" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+  </defs>
+  <!-- background lingkaran samar -->
+  <circle cx="32" cy="32" r="30" fill="rgba(255,255,255,0.15)"/>
+  <!-- Huruf V -->
+  <text x="32" y="44" text-anchor="middle" font-size="36" font-family="Arial, sans-serif" font-weight="bold" fill="url(#gradV)">
+    V
+  </text>
+</svg>
+</div>
+            <div>
+              <p class="text-lg font-bold leading-snug">Vino Dwi Sebastian</p>
+              <p class="text-sm text-slate-300/80">RPL — SMK Krian 1</p>
+            </div>
+          </div>
+          <nav class="space-y-1">
+            <a href="#home" class="block px-4 py-2.5 rounded-xl hover:bg-white/10">Beranda</a>
+            <a href="#about" class="block px-4 py-2.5 rounded-xl hover:bg-white/10">Tentang</a>
+            <a href="#skills" class="block px-4 py-2.5 rounded-xl hover:bg-white/10">Keahlian</a>
+            <a href="#pengalaman" class="block px-4 py-2.5 rounded-xl hover:bg-white/10">Pengalaman</a>
+            <a href="#certificates" class="block px-4 py-2.5 rounded-xl hover:bg-white/10">Sertifikat</a>
+            <a href="#education" class="block px-4 py-2.5 rounded-xl hover:bg-white/10">Pendidikan</a>
+            <a href="#contact" class="block px-4 py-2.5 rounded-xl hover:bg-white/10">Kontak</a>
+          </nav>
+          <div class="pt-2 flex gap-2">
+            <!-- Desktop Admin button hidden until Owner Mode -->
+            <button id="btnAdminDesk" class="hidden btn-shine flex-1 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-slate-900 font-semibold px-4 py-2 rounded-xl shadow-lg">Admin</button>
+            <a href="#pengalaman" class="flex-1 px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10 text-center">Pengalaman</a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main class="space-y-10 lg:space-y-14">
+        <!-- Hero -->
+        <section id="home" class="section">
+          <div class="glass-dark rounded-3xl p-6 md:p-8 lg:p-10 grid md:grid-cols-2 gap-8 items-center">
+            <div class="space-y-5">
+              <span class="inline-flex items-center gap-2 text-xs md:text-sm px-3 py-1.5 rounded-full glass">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                Siap Kolaborasi
+              </span>
+              <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">
+                Halo, Saya <span class="bg-gradient-to-r from-cyan-300 to-indigo-300 text-transparent bg-clip-text">Vino Dwi Sebastian</span>
+              </h1>
+              <p id="heroSubtitle" class="text-slate-300/90 text-lg leading-relaxed">
+                Pelajar SMK Krian 1 Sidoarjo — Jurusan Rekayasa Perangkat Lunak (RPL). Suka membangun aplikasi web yang rapi, dan mudah digunakan.
+              </p>
+              <div class="flex flex-wrap gap-3">
+                <a href="#pengalaman" class="btn-shine bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-900 font-semibold px-5 py-3 rounded-xl hover:from-cyan-300 hover:to-indigo-400 shadow-lg">Lihat Pengalaman</a>
+                <button id="btnDownloadCV" class="px-5 py-3 rounded-xl border border-white/20 hover:bg-white/10 transition">Unduh CV</button>
+              </div>
+              <div class="pt-1"></div>
+            </div>
+            <div class="relative">
+              <div class="rounded-3xl p-6 bg-gradient-to-br from-indigo-600/30 to-cyan-600/20 border border-white/10">
+                <div class="aspect-square rounded-2xl bg-gradient-to-br from-indigo-600/40 to-cyan-600/30 grid place-items-center overflow-hidden">
+                  <img id="heroAvatar" class="w-full h-full object-cover hidden" alt="Foto Profil" onerror="this.src=''; this.style.display='none';">
+                  <svg id="heroAvatarFallback" viewBox="0 0 200 200" class="w-4/5 drop-shadow-xl" aria-label="Avatar">
+                    <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#818cf8"/></linearGradient></defs>
+                    <circle cx="100" cy="100" r="95" fill="url(#g1)" opacity="0.2"/><circle cx="100" cy="80" r="36" fill="#c7d2fe"/>
+                    <rect x="45" y="120" rx="28" ry="28" width="110" height="60" fill="#a5b4fc"/>
+                  </svg>
+                </div>
+                <div class="mt-4 flex items-center justify-between">
+                  <div><p class="font-semibold">Vino Dwi Sebastian</p><p class="text-slate-300/80 text-sm">Rekayasa Perangkat Lunak</p></div>
+                  <span class="px-3 py-1 rounded-lg bg-emerald-400/20 text-emerald-300 text-sm">Verification</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- About -->
+        <section id="about" class="section">
+          <div class="grid lg:grid-cols-3 gap-6">
+            <div class="glass-dark rounded-3xl p-6 md:p-8 lg:col-span-2 space-y-4">
+              <h2 class="text-2xl font-bold">Tentang Saya</h2>
+              <p id="aboutText" class="text-slate-300/90 leading-relaxed">
+                Saya adalah pelajar yang antusias mempelajari pengembangan web. Fokus pada penulisan kode yang bersih, struktur yang rapi, dan desain yang nyaman dilihat. Saya menikmati proses membangun dari ide menjadi produk yang dapat digunakan.
+              </p>
+              <div class="flex gap-3 flex-wrap">
+                <span class="px-3 py-1 rounded-lg bg-white/5 text-sm">Disiplin</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 text-sm">Kolaboratif</span>
+                <span class="px-3 py-1 rounded-lg bg-white/5 text-sm">Cepat Belajar</span>
+              </div>
+            </div>
+            <div class="grid gap-6">
+              <div class="glass-dark rounded-3xl p-6 md:p-8">
+                <h3 class="font-semibold mb-4">Info Singkat</h3>
+                <ul class="space-y-3 text-slate-300/90">
+                  <li><span class="text-slate-400">Nama:</span> <span id="infoName">Vino Dwi Sebastian</span></li>
+                  <li><span class="text-slate-400">Sekolah:</span> SMK Krian 1 Sidoarjo</li>
+                  <li><span class="text-slate-400">Jurusan:</span> Rekayasa Perangkat Lunak</li>
+                  <li><span class="text-slate-400">Status:</span> Pelajar</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Skills -->
+        <section id="skills" class="section">
+          <div class="space-y-6">
+            <div class="flex items-end justify-between"><h2 class="text-2xl font-bold">Keahlian</h2><span class="text-sm text-slate-300/80">Terus bertambah seiring waktu</span></div>
+            <div id="skillsList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+          </div>
+        </section>
+
+        <!-- Pengalaman -->
+        <section id="pengalaman" class="section">
+          <div class="space-y-6">
+            <div class="flex items-center">
+              <h2 class="text-2xl font-bold">Pengalaman</h2>
+            </div>
+            <div id="experienceFilters" class="flex flex-wrap gap-2"></div>
+            <div id="experienceGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+          </div>
+        </section>
+
+        <!-- Sertifikat -->
+        <section id="certificates" class="section">
+          <div class="space-y-6">
+            <div class="flex items-center">
+              <h2 class="text-2xl font-bold">Sertifikat</h2>
+            </div>
+            <div id="certGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+          </div>
+        </section>
+
+        <!-- Edu -->
+        <section id="education" class="section">
+          <div class="glass-dark rounded-3xl p-6 md:p-8">
+            <h2 class="text-2xl font-bold mb-6">Pendidikan</h2>
+            <ol class="relative border-s border-white/10 ps-6 space-y-6">
+              <li>
+                <div class="absolute -start-2 top-1.5 w-3 h-3 rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500"></div>
+                <h3 class="font-semibold">SMK Krian 1 Sidoarjo — RPL</h3>
+                <p class="text-sm text-slate-300/80">2023 — 2026</p>
+                <p class="mt-2 text-slate-300/90">Belajar dasar pemrograman, pengembangan web, dan praktik proyek kolaboratif.</p>
+              </li>
+              <li>
+                <div class="absolute -start-2 top-1.5 w-3 h-3 rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500"></div>
+                <h3 class="font-semibold">MTs YPM 1 Wonoayu</h3>
+                <p class="text-sm text-slate-300/80">2020 - 2023</p>
+                <p class="mt-2 text-slate-300/90">Aktif dalam kegiatan olahraga (Futsal).</p>
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- Kontak -->
+        <section id="contact" class="section">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="glass-dark rounded-3xl p-6 md:p-8">
+              <h2 class="text-2xl font-bold mb-4">Kontak</h2>
+              <p class="text-slate-300/90 mb-6">Punya ide kolaborasi atau ingin berdiskusi? Kirim pesan, saya akan membalas secepatnya.</p>
+              <form id="contactForm" class="space-y-4">
+                <div class="rounded-xl bg-white/5 p-4 mb-2">
+                  <p class="text-sm text-slate-300/80">Email saya</p>
+                  <a href="mailto:vinngeometry@gmail.com" class="text-cyan-300 hover:underline">vinngeometry@gmail.com</a>
+                </div>
+                <div>
+                  <label class="block text-sm mb-1">Nama</label>
+                  <input type="text" name="nama" required class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/60" placeholder="Nama kamu" />
+                </div>
+                <div>
+                  <label class="block text-sm mb-1">Email</label>
+                  <input type="email" name="email" required class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/60" placeholder="email@contoh.com" />
+                </div>
+                <div>
+                  <label class="block text-sm mb-1">Pesan</label>
+                  <textarea name="pesan" required rows="4" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/60" placeholder="Tulis pesan..."></textarea>
+                </div>
+                <button type="submit" class="btn-shine bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-900 font-semibold px-5 py-3 rounded-xl hover:from-cyan-300 hover:to-indigo-400 shadow-lg">Kirim</button>
+                <p id="contactNotice" class="text-xs text-slate-300/80">Catatan: pesan akan dibuka di aplikasi email kamu untuk dikirim ke vinngeometry@gmail.com</p>
+              </form>
+            </div>
+            <div class="grid gap-6">
+              <a href="https://wa.me/+62-881026621698" target="_blank" rel="noopener noreferrer" class="glass-dark rounded-3xl p-6 md:p-8 flex items-center gap-4 hover:bg-white/10 transition">
+                <div class="w-11 h-11 rounded-xl bg-emerald-400/20 grid place-items-center text-emerald-300">✉️</div>
+                <div><p class="font-semibold">WhatsApp</p><p class="text-slate-300/80 text-sm">Nomor belum tersedia</p></div>
+              </a>
+              <a href="https://github.com/vinooods" target="_blank" rel="noopener noreferrer" class="glass-dark rounded-3xl p-6 md:p-8 flex items-center gap-4 hover:bg-white/10 transition">
+                <div class="w-11 h-11 rounded-xl bg-white/10 grid place-items-center">🐙</div>
+                <div><p class="font-semibold">GitHub</p><p class="text-slate-300/80 text-sm">github.com/vinooods</p></div>
+              </a>
+              <a id="igLink" href="https://instagram.com/pinosebastiann" target="_blank" rel="noopener noreferrer" class="glass-dark rounded-3xl p-6 md:p-8 flex items-center gap-4 hover:bg-white/10 transition">
+                <div class="w-11 h-11 rounded-xl bg-pink-400/20 grid place-items-center text-pink-300">📷</div>
+                <div><p class="font-semibold">Instagram</p><p id="igUser" class="text-slate-300/80 text-sm">@pinosebastiann</p></div>
+              </a>
+              <button id="btnDownloadCV" class="glass-dark rounded-3xl p-6 md:p-8 flex items-center justify-between hover:bg-white/10 transition">
+                <div class="flex items-center gap-4">
+                  <div class="w-11 h-11 rounded-xl bg-indigo-400/20 grid place-items-center text-indigo-300">📄</div>
+                  <div><p class="font-semibold">Unduh CV</p><p class="text-slate-300/80 text-sm">Buka Google Drive</p></div>
+                </div>
+                <span class="text-cyan-300">↗</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <footer class="pb-10 pt-4">
+          <div class="text-center text-slate-300/70"><p>© <span id="year"></span> Vino Dwi Sebastian — RPL SMK Krian 1 Sidoarjo</p></div>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <button id="toTop" aria-label="Kembali ke atas" class="fixed right-5 bottom-6 z-40 bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-900 font-bold w-11 h-11 rounded-full shadow-lg hover:from-cyan-300 hover:to-indigo-400">↑</button>
+
+  <!-- Admin Panel (Slide-over) -->
+  <div id="adminWrap" class="admin-panel glass-dark rounded-none md:rounded-l-3xl border-l border-white/10">
+    <div class="admin-header px-5 md:px-6 py-4 border-b border-white/10 bg-black/20 backdrop-blur">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-bold">Admin Panel — Demo</h3>
+          <p class="text-xs text-amber-300/90">Buka dengan ketuk logo “V” 5x cepat.</p>
+        </div>
+        <button id="btnCloseAdmin" class="px-3 py-2 rounded-xl hover:bg-white/10">✕</button>
+      </div>
+    </div>
+    <div class="admin-body p-5 md:p-6 space-y-6">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="rounded-2xl bg-white/5 p-4">
+          <h4 class="font-semibold mb-3">Hero</h4>
+          <label class="block text-sm mb-1">Subjudul</label>
+          <textarea id="editHero" rows="3" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/60"></textarea>
+          <label class="block text-sm mt-4 mb-1">Foto Profil</label>
+          <input id="editAvatar" type="file" accept="image/*" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/60" />
+          <div class="text-xs text-slate-300/70 mt-2">Pratinjau:</div>
+          <div class="rounded-xl overflow-hidden bg-white/5 aspect-square grid place-items-center">
+            <img id="previewAvatar" class="max-w-full max-h-full" alt="Preview" onerror="this.src=''; this.style.display='none';" />
+          </div>
+        </div>
+        <div class="rounded-2xl bg-white/5 p-4">
+          <h4 class="font-semibold mb-3">Tentang</h4>
+          <textarea id="editAbout" rows="6" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/60"></textarea>
+          <label class="block text-sm mt-4 mb-1">Instagram</label>
+          <input id="editInstagram" placeholder="username Instagram" class="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/60" />
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="rounded-2xl bg-white/5 p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold">Keahlian</h4>
+          <button id="btnAddSkill" class="px-3 py-1.5 rounded-lg border border-white/20 hover:bg-white/10 text-sm">Tambah</button>
+        </div>
+        <div id="adminSkills" class="space-y-3"></div>
+      </div>
+
+      <!-- Experiences -->
+      <div class="rounded-2xl bg-white/5 p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold">Pengalaman</h4>
+          <button id="btnAdminAddExperience" class="px-3 py-1.5 rounded-lg border border-white/20 hover:bg-white/10 text-sm">Tambah</button>
+        </div>
+        <div id="adminExperiences" class="space-y-3"></div>
+      </div>
+
+      <!-- Certificates -->
+      <div class="rounded-2xl bg-white/5 p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold">Sertifikat</h4>
+          <button id="btnAdminAddCert" class="px-3 py-1.5 rounded-lg border border-white/20 hover:bg-white/10 text-sm">Tambah</button>
+        </div>
+        <div id="adminCerts" class="space-y-3"></div>
+      </div>
+    </div>
+    <div class="admin-footer px-5 md:px-6 py-4 border-t border-white/10 bg-black/20 backdrop-blur flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <button id="btnClearData" class="px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10">Reset Data</button>
+        <button id="btnExport" class="px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10">Ekspor Data</button>
+        <button id="btnImport" class="px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10">Impor Data</button>
+        <input type="file" id="importFile" accept="application/json" class="hidden" />
+      </div>
+      <button id="btnSaveAdmin" class="btn-shine bg-gradient-to-r from-cyan-400 to-indigo-500 text-slate-900 font-semibold px-5 py-2.5 rounded-xl hover:from-cyan-300 hover:to-indigo-400 shadow-lg">Simpan Perubahan</button>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "vino_portfolio_data_v3";
+    const defaultData = {
+      hero: "Pelajar SMK Krian 1 Sidoarjo — Jurusan Rekayasa Perangkat Lunak (RPL). Suka membangun aplikasi web yang rapi, dan mudah digunakan.",
+      about: "Saya adalah pelajar yang antusias mempelajari pengembangan web. Fokus pada penulisan kode yang bersih, struktur yang rapi, dan desain yang nyaman dilihat. Saya menikmati proses membangun dari ide menjadi produk yang dapat digunakan.",
+      instagram: "pinosebastiann",
+      avatar: "",
+      skills: [
+        { id: uid(), name: "HTML & Semantik", level: 85 },
+        { id: uid(), name: "CSS / Tailwind", level: 80 },
+        { id: uid(), name: "JavaScript Dasar", level: 75 },
+        { id: uid(), name: "UI/UX Dasar", level: 70 }
+      ],
+      experiences: [
+        { id: uid(), title: "Praktik Kerja Lapangan", desc: "Membantu tim membuat landing page dan perbaikan UI.", tags: ["UI","Web"], image: "" },
+        { id: uid(), title: "Volunteer IT School Event", desc: "Menangani dokumentasi web dan publikasi.", tags: ["Organisasi"], image: "" }
+      ],
+      certificates: [
+        { id: uid(), title: "Juara 3 Lomba Web Design", issuer: "Kompetisi Kabupaten", year: "2024", image: "" }
+      ]
+    };
+    function uid() { return "id-" + Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-3); }
+    function loadData() {
+      try { const raw = localStorage.getItem(STORAGE_KEY); if (!raw) return JSON.parse(JSON.stringify(defaultData));
+        const d = JSON.parse(raw);
+        return {
+          hero: d.hero ?? defaultData.hero,
+          about: d.about ?? defaultData.about,
+          instagram: d.instagram ?? defaultData.instagram,
+          avatar: d.avatar ?? defaultData.avatar,
+          skills: Array.isArray(d.skills) ? d.skills : defaultData.skills,
+          experiences: Array.isArray(d.experiences) ? d.experiences : defaultData.experiences,
+          certificates: Array.isArray(d.certificates) ? d.certificates : defaultData.certificates
+        };
+      } catch { return JSON.parse(JSON.stringify(defaultData)); }
+    }
+    function saveData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+    const el = {
+      year: document.getElementById("year"),
+      heroSubtitle: document.getElementById("heroSubtitle"),
+      aboutText: document.getElementById("aboutText"),
+      skillsList: document.getElementById("skillsList"),
+      expGrid: document.getElementById("experienceGrid"),
+      expFilters: document.getElementById("experienceFilters"),
+      certGrid: document.getElementById("certGrid"),
+      btnDownloadCV: document.getElementById("btnDownloadCV"),
+      igLink: document.getElementById("igLink"),
+      igUser: document.getElementById("igUser"),
+      btnMenu: document.getElementById("btnMenu"),
+      mobileNav: document.getElementById("mobileNav"),
+      btnAdmin: document.getElementById("btnAdmin"),
+      btnAdminDesk: document.getElementById("btnAdminDesk"),
+      toTop: document.getElementById("toTop"),
+      bubbles: document.getElementById("bubbles"),
+      // admin
+      adminWrap: document.getElementById("adminWrap"),
+      btnCloseAdmin: document.getElementById("btnCloseAdmin"),
+      editHero: document.getElementById("editHero"),
+      editAbout: document.getElementById("editAbout"),
+      adminSkills: document.getElementById("adminSkills"),
+      adminExperiences: document.getElementById("adminExperiences"),
+      adminCerts: document.getElementById("adminCerts"),
+      btnAddSkill: document.getElementById("btnAddSkill"),
+      btnAdminAddExperience: document.getElementById("btnAdminAddExperience"),
+      btnAdminAddCert: document.getElementById("btnAdminAddCert"),
+      btnSaveAdmin: document.getElementById("btnSaveAdmin"),
+      btnClearData: document.getElementById("btnClearData"),
+    };
+
+    let state = loadData();
+    let activeExpTag = "Semua Pengalaman";
+    let ownerMode = false;
+    let tapCount = 0; let tapTimer = null;
+
+    renderAll();
+    ensureBubbles();
+
+    function renderAll() {
+      const yearEl = document.getElementById("year"); if (yearEl) yearEl.textContent = new Date().getFullYear();
+      el.heroSubtitle.textContent = state.hero;
+      el.aboutText.textContent = state.about;
+      // Avatar
+      const heroImg = document.getElementById('heroAvatar');
+      const heroFallback = document.getElementById('heroAvatarFallback');
+      if (heroImg && heroFallback) {
+        if (state.avatar) {
+          heroImg.src = state.avatar; heroImg.classList.remove('hidden'); heroFallback.style.display = 'none';
+        } else {
+          heroImg.src = ''; heroImg.classList.add('hidden'); heroFallback.style.display = '';
+        }
+      }
+      // IG
+      const user = state.instagram || 'pinosebastiann';
+      el.igUser.textContent = '@' + user;
+      el.igLink.href = 'https://instagram.com/' + encodeURIComponent(user);
+      // sections
+      renderSkills();
+      renderExpFilters();
+      renderExperience();
+      renderCerts();
+      renderAdmin();
+      updateOwnerModeUI();
+    }
+
+    // Skills
+    function renderSkills() {
+      const c = el.skillsList;
+      const map = new Map(state.skills.map(s => [s.id, s]));
+      Array.from(c.children).forEach(node => { if (!map.has(node.dataset.id)) node.remove(); });
+      state.skills.forEach(s => {
+        let card = c.querySelector(`[data-id="${s.id}"]`);
+        if (!card) {
+          card = document.createElement("div");
+          card.dataset.id = s.id;
+          card.className = "glass-dark rounded-3xl p-6 flex items-center gap-5 card-zoom";
+          card.innerHTML = `
+            <div class="ring">
+              <svg width="120" height="120">
+                <circle class="track" cx="60" cy="60" r="48" stroke-width="12" fill="none"></circle>
+                <circle class="progress" cx="60" cy="60" r="48" stroke="url(#ringGrad)" stroke-width="12" stroke-linecap="round" fill="none" />
+                <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#818cf8"/></linearGradient></defs>
+              </svg>
+              <div class="label"><p class="text-xl font-bold"><span class="val">0</span>%</p></div>
+            </div>
+            <div class="flex-1"><p class="font-semibold name"></p><p class="text-sm text-slate-300/80">Kuantifikasi kemampuan berdasarkan pengalaman</p></div>
+          `;
+          c.appendChild(card);
+        }
+        card.querySelector(".name").textContent = s.name;
+        const val = Math.max(0, Math.min(100, Number(s.level) || 0));
+        card.querySelector(".val").textContent = val;
+        const circle = card.querySelector("circle.progress");
+        const circumference = 2 * Math.PI * 48;
+        circle.setAttribute("stroke-dasharray", String(circumference));
+        circle.setAttribute("stroke-dashoffset", String(circumference * (1 - val / 100)));
+      });
+    }
+
+    // Pengalaman
+    function renderExpFilters() {
+      const allTags = new Set(["Semua Pengalaman"]);
+      state.experiences.forEach(p => (p.tags || []).forEach(t => allTags.add(t)));
+      el.expFilters.innerHTML = "";
+      [...allTags].forEach(t => {
+        const btn = document.createElement("button");
+        btn.textContent = t;
+        btn.className = "px-3 py-1.5 rounded-xl border " + (t === activeExpTag ? "border-cyan-300 bg-cyan-300/10" : "border-white/15 hover:bg-white/10");
+        btn.addEventListener("click", () => { activeExpTag = t; renderExpFilters(); renderExperience(); });
+        el.expFilters.appendChild(btn);
+      });
+    }
+    function renderExperience() {
+      const grid = el.expGrid;
+      const filtered = activeExpTag === "Semua Pengalaman" ? state.experiences : state.experiences.filter(p => (p.tags||[]).includes(activeExpTag));
+      const map = new Map(filtered.map(p => [p.id, p]));
+      Array.from(grid.children).forEach(node => { if (!map.has(node.dataset.id)) node.remove(); });
+      filtered.forEach(p => {
+        let card = grid.querySelector(`[data-id="${p.id}"]`);
+        if (!card) {
+          card = document.createElement("div");
+          card.dataset.id = p.id;
+          card.className = "glass-dark rounded-2xl overflow-hidden card-zoom";
+          card.innerHTML = `
+            <div class="w-full aspect-video bg-white/5 overflow-hidden">
+              <img class="exp-img w-full h-full object-cover" alt="Foto Pengalaman" onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';">
+            </div>
+            <div class="p-5">
+              <h3 class="font-semibold exp-title"></h3>
+              <p class="text-slate-300/90 mt-2 exp-desc"></p>
+              <div class="flex flex-wrap gap-2 mt-3 exp-tags"></div>
+            </div>
+          `;
+          grid.appendChild(card);
+        }
+        updateExpCard(card, p);
+      });
+    }
+    function updateExpCard(card, p) {
+      card.querySelector(".exp-title").textContent = p.title || "Tanpa Judul";
+      card.querySelector(".exp-desc").textContent = p.desc || "";
+      const img = card.querySelector(".exp-img");
+      if (p.image) { img.src = p.image; img.style.display = "block"; }
+      else { img.src = ""; img.style.display = "none"; }
+      const wrap = card.querySelector(".exp-tags"); wrap.innerHTML = "";
+      (p.tags || []).slice(0,4).forEach(t => {
+        const span = document.createElement("span");
+        span.className = "px-2 py-1 rounded-lg bg-white/10 text-xs"; span.textContent = t;
+        wrap.appendChild(span);
+      });
+    }
+
+    // Sertifikat
+    function renderCerts() {
+      const grid = el.certGrid;
+      const map = new Map(state.certificates.map(c => [c.id, c]));
+      Array.from(grid.children).forEach(node => { if (!map.has(node.dataset.id)) node.remove(); });
+      state.certificates.forEach(cer => {
+        let card = grid.querySelector(`[data-id="${cer.id}"]`);
+        if (!card) {
+          card = document.createElement("div");
+          card.dataset.id = cer.id;
+          card.className = "glass-dark rounded-2xl overflow-hidden";
+          card.innerHTML = `
+            <div class="w-full aspect-video bg-white/5 overflow-hidden">
+              <img class="cert-img w-full h-full object-cover" alt="Sertifikat" onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';">
+            </div>
+            <div class="p-5">
+              <h3 class="font-semibold cert-title"></h3>
+              <p class="text-slate-300/80 text-sm cert-meta"></p>
+            </div>
+          `;
+          grid.appendChild(card);
+        }
+        const img = card.querySelector(".cert-img");
+        if (cer.image) { img.src = cer.image; img.style.display = "block"; } else { img.src = ""; img.style.display = "none"; }
+        card.querySelector(".cert-title").textContent = cer.title || "Sertifikat";
+        card.querySelector(".cert-meta").textContent = [cer.issuer, cer.year].filter(Boolean).join(" • ");
+      });
+    }
+
+    // Admin render
+    function renderAdmin() {
+      document.getElementById('editInstagram').value = state.instagram || '';
+      el.editHero.value = state.hero;
+      el.editAbout.value = state.about;
+      const prev = document.getElementById('previewAvatar');
+      if (prev) {
+        if (state.avatar) { prev.src = state.avatar; prev.style.display = 'block'; }
+        else { prev.src = ''; prev.style.display = 'none'; }
+      }
+
+      // Skills
+      const wrapS = el.adminSkills; wrapS.innerHTML = "";
+      state.skills.forEach(s => {
+        const row = document.createElement("div");
+        row.className = "grid grid-cols-12 gap-2 items-center";
+        row.dataset.id = s.id;
+        row.innerHTML = `
+          <input class="col-span-6 px-3 py-2 rounded-lg bg-white/5 border border-white/10" placeholder="Nama skill" value="${esc(s.name)}" />
+          <input type="number" min="0" max="100" class="col-span-3 px-3 py-2 rounded-lg bg-white/5 border border-white/10" placeholder="Level" value="${s.level}">
+          <button class="col-span-2 px-3 py-2 rounded-lg border border-white/20 hover:bg-white/10">Hapus</button>
+        `;
+        const [nameI, levelI, delB] = row.querySelectorAll("input,button");
+        nameI.addEventListener("input", e => { s.name = e.target.value; saveRerender(); });
+        levelI.addEventListener("input", e => { const v = Number(e.target.value); s.level = isNaN(v) ? 0 : Math.max(0, Math.min(100, v)); saveRerender(); });
+        delB.addEventListener("click", () => { state.skills = state.skills.filter(x => x.id !== s.id); saveRerender(); renderAdmin(); });
+        wrapS.appendChild(row);
+      });
+
+      // Experiences
+      const wrapE = el.adminExperiences; wrapE.innerHTML = "";
+      state.experiences.forEach(p => {
+        const row = document.createElement("div");
+        row.className = "space-y-2 rounded-xl bg-white/5 p-3";
+        row.dataset.id = p.id;
+        row.innerHTML = `
+          <div class="grid grid-cols-12 gap-2">
+            <input class="col-span-4 px-3 py-2 rounded-lg bg-white/5 border border-white/10" placeholder="Judul" value="${esc(p.title||'')}" />
+            <input class="col-span-4 px-3 py-2 rounded-lg bg-white/5 border border-white/10" placeholder="Tag (pisahkan koma)" value="${esc((p.tags||[]).join(', '))}" />
+            <input class="col-span-3 px-3 py-2 rounded-lg bg-white/5 border border-white/10" type="file" accept="image/*" />
+            <button class="col-span-1 px-3 py-2 rounded-lg border border-white/20 hover:bg-white/10">✕</button>
+          </div>
+          <textarea rows="2" class="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10" placeholder="Deskripsi">${esc(p.desc||'')}</textarea>
+          <div class="text-xs text-slate-300/70">Pratinjau:</div>
+          <div class="rounded-lg overflow-hidden bg-white/5 aspect-video">
+            <img class="w-full h-full object-cover" alt="Preview" src="${esc(p.image||'')}" onerror="this.src=''; this.style.display='none';">
+          </div>
+        `;
+        const [titleI, tagsI, fileI, delB] = row.querySelectorAll("input, input, input, button");
+        const descT = row.querySelector("textarea");
+        const preview = row.querySelector("img");
+        titleI.addEventListener("input", e => { p.title = e.target.value; saveRerender(); });
+        tagsI.addEventListener("input", e => { p.tags = e.target.value.split(",").map(t=>t.trim()).filter(Boolean); saveRerender(); renderExpFilters(); });
+        descT.addEventListener("input", e => { p.desc = e.target.value; saveRerender(); });
+        fileI.addEventListener("change", async e => { const dataUrl = await readFileAsDataURL(e.target.files[0]); if (dataUrl) { p.image = dataUrl; preview.src = dataUrl; preview.style.display = 'block'; saveRerender(); } });
+        delB.addEventListener("click", () => { state.experiences = state.experiences.filter(x => x.id !== p.id); saveRerender(); renderAdmin(); });
+        wrapE.appendChild(row);
+      });
+
+      // Certificates
+      const wrapC = el.adminCerts; wrapC.innerHTML = "";
+      state.certificates.forEach(c => {
+        const row = document.createElement("div");
+        row.className = "space-y-2 rounded-xl bg-white/5 p-3";
+        row.dataset.id = c.id;
+        row.innerHTML = `
+          <div class="grid grid-cols-12 gap-2">
+            <input class="col-span-4 px-3 py-2 rounded-lg bg-white/5 border border-white/10" placeholder="Judul" value="${esc(c.title||'')}" />
+            <input class="col-span-4 px-3 py-2 rounded-lg bg-white/5 border border-white/10" placeholder="Penerbit" value="${esc(c.issuer||'')}" />
+            <input class="col-span-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10" placeholder="Tahun" value="${esc(c.year||'')}" />
+            <input class="col-span-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10" type="file" accept="image/*" />
+            <button class="col-span-1 px-3 py-2 rounded-lg border border-white/20 hover:bg-white/10">✕</button>
+          </div>
+          <div class="rounded-lg overflow-hidden bg-white/5 aspect-video">
+            <img class="w-full h-full object-cover" alt="Preview" src="${esc(c.image||'')}" onerror="this.src=''; this.style.display='none';">
+          </div>
+        `;
+        const inputs = row.querySelectorAll("input");
+        const titleI = inputs[0], issuerI = inputs[1], yearI = inputs[2], fileI = inputs[3];
+        const delB = row.querySelector("button");
+        const preview = row.querySelector("img");
+        titleI.addEventListener("input", e => { c.title = e.target.value; saveRerender(); });
+        issuerI.addEventListener("input", e => { c.issuer = e.target.value; saveRerender(); });
+        yearI.addEventListener("input", e => { c.year = e.target.value; saveRerender(); });
+        fileI.addEventListener("change", async e => { const dataUrl = await readFileAsDataURL(e.target.files[0]); if (dataUrl) { c.image = dataUrl; preview.src = dataUrl; preview.style.display = 'block'; saveRerender(); } });
+        delB.addEventListener("click", () => { state.certificates = state.certificates.filter(x => x.id !== c.id); saveRerender(); renderAdmin(); });
+        wrapC.appendChild(row);
+      });
+    }
+
+    // Events
+    const openAdmin = () => el.adminWrap.classList.add("open");
+    const closeAdmin = () => el.adminWrap.classList.remove("open");
+    el.btnAdmin?.addEventListener("click", openAdmin);
+    el.btnAdminDesk?.addEventListener("click", openAdmin);
+    el.btnCloseAdmin.addEventListener("click", closeAdmin);
+
+    el.btnMenu?.addEventListener("click", () => { el.mobileNav.classList.toggle("hidden"); });
+
+    // Adders (admin only)
+    el.btnAddSkill?.addEventListener("click", () => { state.skills.push({ id: uid(), name: "Skill Baru", level: 50 }); saveRerender(); renderAdmin(); });
+    el.btnAdminAddExperience?.addEventListener("click", () => { state.experiences.unshift({ id: uid(), title: "Pengalaman Baru", desc: "Deskripsi singkat pengalaman.", tags: ["Baru"], image: "" }); saveRerender(); renderAdmin(); });
+    el.btnAdminAddCert?.addEventListener("click", () => { state.certificates.unshift({ id: uid(), title: "Sertifikat Baru", issuer: "Penyelenggara", year: new Date().getFullYear().toString(), image: "" }); saveRerender(); renderAdmin(); });
+
+    // Save/Clear/Import/Export
+    el.btnSaveAdmin.addEventListener("click", async () => {
+      state.hero = el.editHero.value.trim() || defaultData.hero;
+      state.about = el.editAbout.value.trim() || defaultData.about;
+      state.instagram = document.getElementById('editInstagram').value.trim() || defaultData.instagram || '';
+      const fileInput = document.getElementById('editAvatar');
+      if (fileInput && fileInput.files && fileInput.files[0]) {
+        const dataUrl = await readFileAsDataURL(fileInput.files[0]);
+        if (dataUrl) state.avatar = dataUrl;
+      }
+      saveRerender(); toast("Perubahan disimpan!"); closeAdmin();
+    });
+    el.btnClearData.addEventListener("click", () => {
+      if (!confirm("Yakin reset semua data ke bawaan?")) return;
+      state = JSON.parse(JSON.stringify(defaultData)); saveRerender(); renderAdmin(); toast("Data direset.");
+    });
+    document.getElementById('btnExport').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'vino_portfolio_data.json'; a.click(); URL.revokeObjectURL(url);
+    });
+    document.getElementById('btnImport').addEventListener('click', () => document.getElementById('importFile').click());
+    document.getElementById('importFile').addEventListener('change', (e) => {
+      const file = e.target.files[0]; if (!file) return; const reader = new FileReader();
+      reader.onload = () => { try {
+        const d = JSON.parse(reader.result);
+        if (d && d.skills && d.experiences && d.certificates) { state = d; saveRerender(); renderAdmin(); toast('Impor berhasil!'); }
+        else { toast('Format tidak valid.'); }
+      } catch { toast('Gagal impor.'); } };
+      reader.readAsText(file);
+    });
+
+    // Contact form: open default mail app with prefilled content
+    document.getElementById('contactForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const nama = (form.nama?.value || '').trim();
+      const email = (form.email?.value || '').trim();
+      const pesan = (form.pesan?.value || '').trim();
+      const subject = encodeURIComponent(`Pesan dari ${nama || 'Pengunjung'}`);
+      const body = encodeURIComponent(`Nama: ${nama}\nEmail: ${email}\n\nPesan:\n${pesan}`);
+      const mailto = `mailto:vinngeometry@gmail.com?subject=${subject}&body=${body}`;
+      window.open(mailto, '_blank');
+    });
+
+    // CV
+    el.btnDownloadCV.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.open("https://drive.google.com/file/d/1DOXFC4NRSEQtiKh4_mez7jPKHjlFbQ4y/view", "_blank");
+    });
+
+    // Back to top
+    window.addEventListener("scroll", () => { if (window.scrollY > 600) el.toTop.classList.add("show"); else el.toTop.classList.remove("show"); });
+    el.toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+    // Owner Mode: ketuk logo V 5x
+    
+    document.addEventListener('click', (e) => {
+      const target = e.target.closest('[data-logo]');
+      if (!target) return;
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => { tapCount = 0; }, 1500);
+      if (tapCount >= 5) { tapCount = 0; activateOwnerMode(); }
+    });
+    function activateOwnerMode() {
+      ownerMode = true;
+      updateOwnerModeUI();
+      toast("Owner Mode aktif — tombol Admin ditampilkan");
+      setTimeout(openAdmin, 200);
+    }
+    function updateOwnerModeUI() {
+      if (ownerMode) {
+        el.btnAdmin?.classList.remove("hidden");
+        el.btnAdminDesk?.classList.remove("hidden");
+      } else {
+        el.btnAdmin?.classList.add("hidden");
+        el.btnAdminDesk?.classList.add("hidden");
+      }
+    }
+
+    // Utilities
+    function saveRerender() { saveData(state); renderExperience(); renderCerts(); renderSkills(); }
+    function esc(str="") { return String(str).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;"); }
+    function toast(message) {
+      let t = document.getElementById("toast");
+      if (!t) { t = document.createElement("div"); t.id = "toast"; t.className = "fixed bottom-6 left-1/2 -translate-x-1/2 z-50"; document.body.appendChild(t); }
+      const card = document.createElement("div"); card.className = "glass-dark rounded-xl px-4 py-2 text-sm shadow-lg"; card.textContent = message; t.appendChild(card);
+      setTimeout(() => { card.style.transition = "opacity .4s ease, transform .4s ease"; card.style.opacity = "0"; card.style.transform = "translateY(6px)"; setTimeout(() => card.remove(), 400); }, 1400);
+    }
+    function ensureBubbles() {
+      if (!el.bubbles || el.bubbles.childElementCount > 0) return;
+      const count = 16;
+      for (let i = 0; i < count; i++) {
+        const b = document.createElement("span");
+        const size = Math.floor(Math.random()*16)+8;
+        b.className = "bubble";
+        b.style.left = Math.floor(Math.random()*95) + "vw";
+        b.style.width = size + "px"; b.style.height = size + "px";
+        b.style.setProperty("--dur", (12 + Math.random()*10) + "s");
+        b.style.setProperty("--x", (Math.random()<.5? -1:1) * (10 + Math.random()*60) + "px");
+        b.style.setProperty("--s", (0.8 + Math.random()*0.9));
+        el.bubbles.appendChild(b);
+      }
+    }
+    function readFileAsDataURL(file) {
+      return new Promise((resolve) => {
+        if (!file) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    }
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9820d18c605b7e32',t:'MTc1ODM2NjAyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
